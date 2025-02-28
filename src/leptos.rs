@@ -3,6 +3,7 @@
 use leptos::prelude::*;
 use wasm_bindgen::JsValue;
 use crate::prelude::{ChartSeries, ChartType};
+use send_wrapper::SendWrapper;
 
 /// An ApexCharts component for Leptos. 
 ///
@@ -134,6 +135,13 @@ pub fn ApexChartComponent(
 		};
 		let chart = ApexChart::new(&JsValue::from_str(&options));
 		chart.render(&id_clone);
+
+		on_cleanup({
+			let wrapped = SendWrapper::new(move || {
+				chart.destroy();
+			});
+			move || wrapped()
+		});
 	});
 	view! {
 		<div id={id.clone()}></div>
